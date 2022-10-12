@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -19,7 +18,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class Test
 
@@ -33,31 +31,29 @@ public class Test
 	
 
 	public static void main(String args[]) {
-
+		
 		System.out.print("1. Run obfuscation\n");
 		System.out.print("2. Run deobfuscation\n");
+		int choose = -1;
 
-		int age = -1;
-
-		while ((age != 1) && (age != 2)) {
+		while ((choose != 1) && (choose != 2)) {
 			@SuppressWarnings("resource")
 			Scanner scanner = new Scanner(System.in);
 			String name = scanner.nextLine();
 
 			if (isNumber(name))
-				age = Integer.parseInt(name);
+				choose = Integer.parseInt(name);
 		}
 
-		switch (age) {
+		switch (choose) {
 		case (1):
 			obfuscation();
 			break;
 		case (2):
 			unobfuscatation();
 			break;
-
 		}
-
+		System.out.print("End of program");
 	}
 
 	public static boolean isNumber(String str) {
@@ -90,55 +86,48 @@ public class Test
 			builder = factory.newDocumentBuilder();
 			Document document = builder.parse(xmlFile);
 			document.getDocumentElement().normalize();
-			//System.out.println("Корневой элемент: " + document.getDocumentElement().getNodeName());
-			// получаем узлы с именем Language
+			
+			// получаем узлы с именем Employee
 			// теперь XML полностью загружен в память
 			// в виде объекта Document
 			NodeList nodeList = document.getElementsByTagName("employee");
 
-			// создадим из него список объектов Language
+			// создадим из него список объектов employee
 
 			for (int i = 0; i < nodeList.getLength(); i++) {
-				list.add(getLanguage(nodeList.item(i)));
+				list.add(getEmploye(nodeList.item(i)));
 			}
 
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
-
 		return list;
 	}
 
 	public static void obfuscation() {
 		List<Employees> list = new ArrayList<Employees>();
-
 		list = readData(file);
+		
 		for (Employees emp : list) {
 			emp.setId(obfuscate(emp.getId()));
 			emp.setFirstName(obfuscate(emp.getFirstName()));
 			emp.setLastName(obfuscate(emp.getLastName()));
 			emp.setLocation(obfuscate(emp.getLocation()));
-			//System.out.println(emp.toString());
-
 		}
 		saveXMLfile(list,obf);
-
 	}
 	
 	public static void unobfuscatation() {
 		List<Employees> list = new ArrayList<Employees>();
-
 		list = readData(obf);
+		
 		for (Employees emp : list) {
 			emp.setId(unobfuscate(emp.getId()));
 			emp.setFirstName(unobfuscate(emp.getFirstName()));
 			emp.setLastName(unobfuscate(emp.getLastName()));
 			emp.setLocation(unobfuscate(emp.getLocation()));
-			//System.out.println(emp.toString());
-
 		}
 		saveXMLfile(list,unubf);
-
 	}
 
 	private static void saveXMLfile(List<Employees> list, String way) {
@@ -147,40 +136,40 @@ public class Test
 	            XMLStreamWriter writer = output.createXMLStreamWriter(new FileWriter(way));
 	            String end = "\n\t";
 	 
-	            // Открываем XML-документ и Пишем корневой элемент BookCatalogue
+	            // Открываем XML-документ и Пишем корневой элемент
 	            writer.writeStartDocument("1.0");
 	            writer.writeCharacters("\n");
 	            writer.writeStartElement("employees");
 
 	      
 	            
-	            // Делаем цикл для книг
+	            // Делаем цикл для сотрудников
 	            for (Employees emp:list) {
-	                // Записываем Book
+	                // Записываем Employee
 	            	writer.writeCharacters("\n ");
 	                writer.writeStartElement("employee");
 	                writer.writeAttribute("id",emp.getId());
 	                writer.writeCharacters(end);
 	    
-	                // Заполняем все тэги для книги                
-	                // Title
+	                // Заполняем все тэги для работников                
+	                // firstName
 	                writer.writeStartElement("firstName");
 	                writer.writeCharacters(emp.getFirstName());
 	                writer.writeEndElement();
 	                writer.writeCharacters(end);
-	                // Author
+	                // lastName
 	                writer.writeStartElement("lastName");
 	                writer.writeCharacters(emp.getLastName());
 	                writer.writeEndElement();
 	                writer.writeCharacters(end);
-	                // Date
+	                // location
 	                writer.writeStartElement("location");
 	                writer.writeCharacters(emp.getLocation());
 	                writer.writeEndElement();
 	                writer.writeCharacters("\n ");
 	               
 	 
-	                // Закрываем тэг Book
+	                // Закрываем тэг Employee
 	                writer.writeEndElement();
 	            }
 	            // Закрываем корневой элемент
@@ -194,7 +183,7 @@ public class Test
 	        }
 	}
 
-	private static Employees getLanguage(Node node) {
+	private static Employees getEmploye(Node node) {
 		Employees emp = new Employees();
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
